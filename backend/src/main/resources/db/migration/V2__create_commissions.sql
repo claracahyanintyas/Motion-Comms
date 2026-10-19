@@ -1,0 +1,9 @@
+CREATE TABLE commissions (
+    id BIGSERIAL PRIMARY KEY,
+    title VARCHAR(150) NOT NULL,
+    description VARCHAR(1000),
+    price NUMERIC(12,2) NOT NULL CHECK (price >= 0.01),
+    commissionee_id BIGINT NOT NULL REFERENCES users(id),
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);

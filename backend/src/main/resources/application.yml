@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+  flyway:
+    locations: classpath:db/migration
+
+app:
+  jwt-secret: ${JWT_SECRET}
+  jwt-expiration-milliseconds: 86400000
+  encryption:
+    secret: ${ENCRYPTION_SECRET}
+  cors:
+    allowed-origins: http://localhost:5173,http://localhost:3000
+
+

@@ -1,0 +1,8 @@
+package org.individualproject.semester3project.usecase.payoutMethod;
+
+import org.individualproject.semester3project.usecase.payoutMethod.dto.GetActivePayoutMethodsByUserInput;
+import org.individualproject.semester3project.usecase.payoutMethod.dto.GetActivePayoutMethodsByUserOutput;
+
+public interface GetActivePayoutMethodsByUserUseCase {
+    GetActivePayoutMethodsByUserOutput  getActivePayoutMethodByUser(GetActivePayoutMethodsByUserInput input);
+}

@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:16
+    restart: always
+    networks:
+      - MotionComms
+    environment:
+      POSTGRES_DB: MotionComms
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Vrogchagmad4!
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    networks:
+      - MotionComms
+    build:
+      context: ./backend
+    image: claracahyanintyas/motioncomms-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/MotionComms
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: Vrogchagmad4!
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  frontend:
+    networks:
+      - MotionComms
+    build:
+      context: ./backend
+    image: claracahyanintyas/motioncomms-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_API_BASE_URL=http://backend:8080
+
+
+
+volumes:
+  pgdata:
+
+networks:
+  MotionComms:

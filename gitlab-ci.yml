@@ -1,0 +1,52 @@
+stages:
+  - build
+  - test
+  - sonarqube
+  - deploy
+
+variables:
+  GIT_DEPTH: "0"
+
+build:
+  stage: build
+  script:
+    - cd backend
+    - ./gradlew assemble --no-daemon --no-watch-fs
+
+test:
+  stage: test
+  script:
+    - cd backend
+    - ./gradlew test jacocoTestReport --no-daemon --no-watch-fs
+  artifacts:
+    paths:
+      - backend/build/reports/jacoco/test/jacocoTestReport.xml
+
+sonarqube:
+  stage: sonarqube
+  image: gradle:8.5-jdk21
+  variables:
+    SONAR_HOST_URL: "http://localhost:9000"
+    SONAR_TOKEN: "$SONAR_TOKEN"
+  script:
+    - cd backend
+    - ./gradlew sonar --no-daemon --no-watch-fs
+  dependencies:
+    - test
+
+deploy:
+  stage: deploy
+  image: docker:24.0.2
+  services:
+    - docker:dind
+  before_script:
+    - docker info
+    - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+  script:
+    - docker build -t "${env:BACKEND_IMAGE}:latest" ./backend
+    - docker push "${env:BACKEND_IMAGE}:latest"
+
+    - docker build -t "${env:FRONTEND_IMAGE}:latest" ./frontend
+    - docker push "${env:FRONTEND_IMAGE}:latest"
+  only:
+    - main
